@@ -174,6 +174,6 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 
 	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		w.Write([]byte("User-agent: *\nDisallow: /"))
+		w.Write([]byte("User-agent: *\nAllow: /"))
 	}).Name("robots")
 }

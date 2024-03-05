@@ -30,6 +30,8 @@ func (h *handler) showPublicCategoryListPage(w http.ResponseWriter, r *http.Requ
 	view.Set("categories", categories)
 	view.Set("total", len(categories))
 	view.Set("menu", "categories")
+	view.Set("countUnread", 0)
+	view.Set("countErrorFeeds", 0)
 	view.Set("user", user)
 
 	html.OK(w, r, view.Render("categories_public"))
