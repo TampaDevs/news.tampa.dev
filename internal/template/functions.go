@@ -171,7 +171,7 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 	now := timezone.Now(tz)
 	t = timezone.Convert(tz, t)
 	if now.Before(t) {
-		return printer.Print("time_elapsed.not_yet")
+		return t.Format("Mon Jan 02")
 	}
 
 	diff := now.Sub(t)
