@@ -100,7 +100,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 					slog.String("header_csrf", headerValue),
 				)
 
-				if mux.CurrentRoute(r).GetName() == "checkLogin" {
+				if mux.CurrentRoute(r).GetName() == "signin" {
 					html.Redirect(w, r, route.Path(m.router, "login"))
 					return
 				}
@@ -148,13 +148,14 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 	route := mux.CurrentRoute(r)
 	switch route.GetName() {
 	case "login",
-		"checkLogin",
+		"signin",
 		"stylesheet",
 		"javascript",
 		"oauth2Redirect",
 		"oauth2Callback",
 		"appIcon",
 		"favicon",
+		"icon",
 		"webManifest",
 		"robots",
 		"sharedEntry",
@@ -162,6 +163,10 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 		"offline",
 		"proxy",
 		"webauthnLoginBegin",
+		"home",
+		"public_categories",
+		"publicCategoryEntries",
+		"publicCategoryFeeds",
 		"webauthnLoginFinish":
 		return true
 	default:
