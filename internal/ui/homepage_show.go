@@ -49,7 +49,7 @@ func (h *handler) showPublicHomepage(w http.ResponseWriter, r *http.Request) {
 	view.Set("category", category)
 	view.Set("total", count)
 	view.Set("entries", entries)
-	view.Set("pagination", getPagination("/", count, offset, 10))
+	view.Set("pagination", getPagination("/", count, offset, 25))
 	view.Set("menu", "categories")
 	view.Set("countUnread", h.store.CountUnreadEntries(1))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(1))
