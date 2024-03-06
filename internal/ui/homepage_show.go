@@ -14,20 +14,20 @@ import (
 )
 
 func (h *handler) showPublicHomepage(w http.ResponseWriter, r *http.Request) {
-	category, err := h.store.HomepageDefaultCategory()
+	categories, err := h.store.HomepageDefaultCategories()
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	if category == nil {
+	if categories == nil {
 		html.NotFound(w, r)
 		return
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := storage.NewAnonymousQueryBuilder(h.store)
-	builder.WithCategoryID(category.ID)
+	builder.WithCategories(categories)
 	builder.WithSorting("published_at", "desc")
 	builder.WithOffset(offset)
 	builder.WithLimit(25)
@@ -46,7 +46,7 @@ func (h *handler) showPublicHomepage(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
-	view.Set("category", category)
+	view.Set("categories", categories)
 	view.Set("total", count)
 	view.Set("entries", entries)
 	view.Set("pagination", getPagination("/", count, offset, 25))

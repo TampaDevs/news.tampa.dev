@@ -70,21 +70,26 @@ func (s *Storage) HomepageCategory(categoryID int64) (*model.Category, error) {
 	}
 }
 
-// HomepageDefaultCategory returns the default homepage category
-func (s *Storage) HomepageDefaultCategory() (*model.Category, error) {
-	var category model.Category
+// HomepageDefaultCategories returns the default homepage category
+func (s *Storage) HomepageDefaultCategories() (model.Categories, error) {
+	query := `SELECT id, user_id, title, hide_globally, public, show_on_homepage, homepage_default FROM categories WHERE homepage_default = true`
+	rows, err := s.db.Query(query)
 
-	query := `SELECT id, user_id, title, hide_globally, public, show_on_homepage, homepage_default FROM categories WHERE homepage_default = true AND show_on_homepage = true`
-	err := s.db.QueryRow(query).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally, &category.Public, &category.ShowOnHomepage, &category.IsHomepageDefault)
-
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, nil
-	case err != nil:
-		return nil, fmt.Errorf(`store: unable to fetch category: %v`, err)
-	default:
-		return &category, nil
+	if err != nil {
+		return nil, fmt.Errorf(`store: unable to fetch categories: %v`, err)
 	}
+
+	categories := make(model.Categories, 0)
+	for rows.Next() {
+		var category model.Category
+		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally, &category.Public, &category.ShowOnHomepage, &category.IsHomepageDefault); err != nil {
+			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
+		}
+
+		categories = append(categories, &category)
+	}
+
+	return categories, nil
 }
 
 // FirstCategory returns the first category for the given user.

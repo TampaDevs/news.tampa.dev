@@ -17,9 +17,12 @@ import (
 
 // EntryQueryBuilder builds a SQL query to fetch entries.
 type EntryQueryBuilder struct {
-	store           *Storage
-	args            []interface{}
+	store *Storage
+	args  []interface{}
+	// TODO: It would be preferable to refactor these fields into
+	// a single array of typed conditions, but this is fine for now
 	conditions      []string
+	orConditions    []string
 	sortExpressions []string
 	limit           int
 	offset          int
@@ -135,6 +138,20 @@ func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder 
 		e.conditions = append(e.conditions, fmt.Sprintf("f.category_id = $%d", len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
+	return e
+}
+
+// WithCategories filters by an array of category IDs.
+func (e *EntryQueryBuilder) WithCategories(categories model.Categories) *EntryQueryBuilder {
+	if len(categories) == 0 {
+		return e
+	}
+
+	for i, cat := range categories {
+		e.orConditions = append(e.orConditions, fmt.Sprintf("f.category_id = $%d", (i+1)))
+		e.args = append(e.args, cat.ID)
+	}
+
 	return e
 }
 
@@ -309,6 +326,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 	condition := e.buildCondition()
 	sorting := e.buildSorting()
+
 	query = fmt.Sprintf(query, condition, sorting)
 
 	rows, err := e.store.db.Query(query, e.args...)
@@ -435,7 +453,7 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 }
 
 func (e *EntryQueryBuilder) buildCondition() string {
-	return strings.Join(e.conditions, " AND ")
+	return strings.Join(e.conditions, " AND ") + strings.Join(e.orConditions, " OR ")
 }
 
 func (e *EntryQueryBuilder) buildSorting() string {
