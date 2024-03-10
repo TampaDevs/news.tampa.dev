@@ -35,10 +35,10 @@
 
     {{ if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">
     <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
     {{ else }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com; img-src * data:; media-src *; frame-src *">
     {{ end }}
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
