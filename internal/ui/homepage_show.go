@@ -8,6 +8,8 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response/rss"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -57,4 +59,38 @@ func (h *handler) showPublicHomepage(w http.ResponseWriter, r *http.Request) {
 	view.Set("showOnlyUnreadEntries", false)
 
 	html.OK(w, r, view.Render("category_entries_public"))
+}
+
+func (h *handler) publicHomepageRSS(w http.ResponseWriter, r *http.Request) {
+	categories, err := h.store.HomepageDefaultCategories()
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	if categories == nil {
+		html.NotFound(w, r)
+		return
+	}
+
+	builder := storage.NewAnonymousQueryBuilder(h.store)
+	builder.WithCategories(categories)
+	builder.WithSorting("published_at", "desc")
+	builder.WithLimit(100)
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
+	view.Set("entries", entries)
+	view.Set("rss", true)
+	view.Set("url", "https://"+r.Host+r.URL.RequestURI())
+	view.Set("title", "Tampa Devs News - Homepage Feed")
+	view.Set("description", locale.NewPrinter("en_US").Printf("home_page.rss.description"))
+
+	rss.OK(w, r, view.Render("category_entries_public"))
 }

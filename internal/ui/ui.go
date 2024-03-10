@@ -120,8 +120,10 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 
 	// Public pages.
 	uiRouter.Handle("/", http.HandlerFunc(handler.showPublicHomepage)).Name("home").Methods(http.MethodGet)
+	uiRouter.Handle("/feed", http.HandlerFunc(handler.publicHomepageRSS)).Name("home_rss").Methods(http.MethodGet)
 	uiRouter.Handle("/c", http.HandlerFunc(handler.showPublicCategoryListPage)).Name("public_categories").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/c/{categoryID}/entries", handler.showPublicCategoryEntriesPage).Name("publicCategoryEntries").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/c/{categoryID}/feed", handler.showPublicCategoryEntriesPageRSS).Name("publicCategoryEntries_rss").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/c/{categoryID}/feeds", handler.showPublicCategoryFeedsPage).Name("publicCategoryFeeds").Methods(http.MethodGet)
 
 	// Settings pages.

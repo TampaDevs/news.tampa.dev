@@ -1,0 +1,16 @@
+{{ define "content" }}
+  <title>{{if .category.Title }}{{ .category.Title }}{{ else }}{{ .title }}{{ end }}</title>
+  <link>{{ .url }}</link>
+  <description>{{if .category.Title }}{{ .category.Title }}{{ else }}{{ .description }}{{ end }}</description>
+  <language>en-us</language>
+  <atom:link href="{{ route "home_rss" }}" rel="self" type="application/rss+xml" />
+  {{ range .entries }}
+  <item>
+    <title><![CDATA[{{ .Title }}]]></title>
+    <link>{{ .URL }}</link>
+    <guid isPermaLink="true">{{ .URL }}</guid>
+    <description><![CDATA[{{ .Content }}]]></description>
+    <pubDate>{{ .Date.Format "02 Jan 2006 15:04 -0700" }}</pubDate>
+  </item>
+  {{ end }}
+{{ end }}

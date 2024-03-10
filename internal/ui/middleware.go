@@ -164,8 +164,10 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 		"proxy",
 		"webauthnLoginBegin",
 		"home",
+		"home_rss",
 		"public_categories",
 		"publicCategoryEntries",
+		"publicCategoryEntries_rss",
 		"publicCategoryFeeds",
 		"webauthnLoginFinish":
 		return true

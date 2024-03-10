@@ -8,6 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response/rss"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -56,4 +57,38 @@ func (h *handler) showPublicCategoryEntriesPage(w http.ResponseWriter, r *http.R
 	view.Set("showOnlyUnreadEntries", false)
 
 	html.OK(w, r, view.Render("category_entries_public"))
+}
+
+func (h *handler) showPublicCategoryEntriesPageRSS(w http.ResponseWriter, r *http.Request) {
+	categoryID := request.RouteInt64Param(r, "categoryID")
+	category, err := h.store.HomepageCategory(categoryID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	if category == nil {
+		html.NotFound(w, r)
+		return
+	}
+
+	builder := storage.NewAnonymousQueryBuilder(h.store)
+	builder.WithCategoryID(category.ID)
+	builder.WithSorting("published_at", "desc")
+	builder.WithLimit(25)
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
+	view.Set("category", category)
+	view.Set("entries", entries)
+	view.Set("rss", true)
+	view.Set("url", "https://"+r.Host+r.URL.RequestURI())
+
+	rss.OK(w, r, view.Render("category_entries_public"))
 }

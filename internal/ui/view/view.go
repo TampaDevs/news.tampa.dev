@@ -28,7 +28,13 @@ func (v *View) Set(param string, value interface{}) *View {
 
 // Render executes the template with arguments.
 func (v *View) Render(template string) []byte {
-	return v.tpl.Render(template+".html", v.params)
+	templateName := template + ".html"
+
+	if v.params["rss"] == true {
+		templateName = template + ".rss"
+	}
+
+	return v.tpl.Render(templateName, v.params)
 }
 
 // New returns a new view with default parameters.
