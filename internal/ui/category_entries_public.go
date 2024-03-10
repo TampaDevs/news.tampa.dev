@@ -53,6 +53,7 @@ func (h *handler) showPublicCategoryEntriesPage(w http.ResponseWriter, r *http.R
 	view.Set("total", count)
 	view.Set("entries", entries)
 	view.Set("pagination", getPagination(route.Path(h.router, "publicCategoryEntries", "categoryID", category.ID), count, offset, 25))
+	view.Set("rss_url", "https://"+r.Host+route.Path(h.router, "publicCategoryEntries_rss", "categoryID", category.ID))
 	view.Set("menu", "categories")
 	view.Set("showOnlyUnreadEntries", false)
 
@@ -87,8 +88,8 @@ func (h *handler) showPublicCategoryEntriesPageRSS(w http.ResponseWriter, r *htt
 	view := view.New(h.tpl, r, sess)
 	view.Set("category", category)
 	view.Set("entries", entries)
+	view.Set("rss_url", "https://"+r.Host+route.Path(h.router, "publicCategoryEntries_rss", "categoryID", category.ID))
 	view.Set("rss", true)
-	view.Set("url", "https://"+r.Host+r.URL.RequestURI())
 
 	rss.OK(w, r, view.Render("category_entries_public"))
 }

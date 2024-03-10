@@ -29,6 +29,10 @@
 
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
 
+    {{ if .rss_url }}
+    <link rel="alternate" type="application/rss+xml" href="{{ .rss_url }}" title="{{template "title" .}} - Tampa Devs News">
+    {{ end }}
+
     {{ if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">

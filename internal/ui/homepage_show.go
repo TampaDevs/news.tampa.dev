@@ -9,6 +9,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/response/rss"
+	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -55,6 +56,7 @@ func (h *handler) showPublicHomepage(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "categories")
 	view.Set("countUnread", h.store.CountUnreadEntries(1))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(1))
+	view.Set("rss_url", "https://"+r.Host+route.Path(h.router, "home_rss"))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(1))
 	view.Set("showOnlyUnreadEntries", false)
 
@@ -88,7 +90,7 @@ func (h *handler) publicHomepageRSS(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("entries", entries)
 	view.Set("rss", true)
-	view.Set("url", "https://"+r.Host+r.URL.RequestURI())
+	view.Set("rss_url", "https://"+r.Host+route.Path(h.router, "home_rss"))
 	view.Set("title", "Tampa Devs News - Homepage Feed")
 	view.Set("description", locale.NewPrinter("en_US").Printf("home_page.rss.description"))
 
