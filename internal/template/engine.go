@@ -175,9 +175,6 @@ func (e *Engine) Render(name string, data map[string]interface{}) []byte {
 		"plural": func(key string, n int, args ...interface{}) string {
 			return printer.Plural(key, n, args...)
 		},
-		"unescapeHTML": func(s string) template.HTML {
-			return template.HTML(s)
-		},
 	}
 
 	var b bytes.Buffer

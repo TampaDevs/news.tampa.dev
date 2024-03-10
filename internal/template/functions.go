@@ -104,6 +104,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"plural": func(key string, n int, args ...interface{}) string {
 			return ""
 		},
+		"cloudflare_analytics_token": func() template.HTML {
+			return template.HTML(`2830d2e10f374aed98c8c1a36af9d02f`)
+		},
 	}
 }
 
