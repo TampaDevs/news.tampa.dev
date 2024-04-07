@@ -12,6 +12,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"miniflux.app/v2/internal/crypto"
 )
 
 const compressionThreshold = 1024
@@ -29,6 +31,13 @@ type Builder struct {
 // WithStatus uses the given status code to build the response.
 func (b *Builder) WithStatus(statusCode int) *Builder {
 	b.statusCode = statusCode
+	return b
+}
+
+// WithCSP adds a Content Security Policy header to the response
+func (b *Builder) WithCSP() *Builder {
+	csp := `default-src 'self' cloudflareinsights.com; img-src 'self' *.tampadevs.com *.tampa.dev; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com 'nonce-%s';`
+	b.headers["Content-Security-Policy"] = fmt.Sprintf(csp, crypto.GenerateRandomStringHex(4))
 	return b
 }
 

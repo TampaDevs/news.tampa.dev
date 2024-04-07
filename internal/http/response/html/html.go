@@ -16,6 +16,7 @@ func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
 	builder := response.New(w, r)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithCSP()
 	builder.WithBody(body)
 	builder.Write()
 }
@@ -37,7 +38,7 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
-	builder.WithHeader("Content-Security-Policy", `default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com;`)
+	builder.WithCSP()
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithBody(err)
@@ -61,7 +62,7 @@ func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusBadRequest)
-	builder.WithHeader("Content-Security-Policy", `default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com;`)
+	builder.WithCSP()
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithBody(err)
@@ -87,6 +88,7 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithBody("Access Forbidden")
+	builder.WithCSP()
 	builder.Write()
 }
 
@@ -109,6 +111,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithBody("Page Not Found")
+	builder.WithCSP()
 	builder.Write()
 }
 

@@ -33,14 +33,6 @@
     <link rel="alternate" type="application/rss+xml" href="{{ .rss_url }}" title="{{template "title" .}} - Tampa Devs News">
     {{ end }}
 
-    {{ if and .user .user.Stylesheet }}
-    {{ $stylesheetNonce := nonce }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">
-    <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
-    {{ else }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com; img-src * data:; media-src *; frame-src *">
-    {{ end }}
-
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
     <script src="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>

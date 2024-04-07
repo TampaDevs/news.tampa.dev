@@ -136,7 +136,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
 		b.WithStatus(resp.StatusCode)
-		b.WithHeader("Content-Security-Policy", `default-src 'self' cloudflareinsights.com; script-src 'self' static.cloudflareinsights.com www.googletagmanager.com cdn.segment.com;`)
+		b.WithCSP()
 		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
 		forwardedResponseHeader := []string{"Content-Encoding", "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"}
 		for _, responseHeaderName := range forwardedResponseHeader {
