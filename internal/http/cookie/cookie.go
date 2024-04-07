@@ -10,8 +10,8 @@ import (
 
 // Cookie names.
 const (
-	CookieAppSessionID  = "MinifluxAppSessionID"
-	CookieUserSessionID = "MinifluxUserSessionID"
+	CookieAppSessionID  = "TampaDevsNewsAppSession"
+	CookieUserSessionID = "TampaDevsNewsUserSession"
 
 	// Cookie duration in days.
 	cookieDuration = 30
@@ -26,7 +26,7 @@ func New(name, value string, isHTTPS bool, path string) *http.Cookie {
 		Secure:   isHTTPS,
 		HttpOnly: true,
 		Expires:  time.Now().Add(cookieDuration * 24 * time.Hour),
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 }
 
@@ -40,7 +40,7 @@ func Expired(name string, isHTTPS bool, path string) *http.Cookie {
 		HttpOnly: true,
 		MaxAge:   -1,
 		Expires:  time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 }
 
